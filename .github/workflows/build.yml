@@ -1,35 +1,37 @@
-name: Valider et Générer le Portfolio
+name: Valider et Générer le Portfolio             # nom du workflow
 
-on:
+on:                                               # déclencheurs du workflow
   push:
-    branches: [ main ]
+    branches: [ main ]                            # lorsqu'on push sur main
   pull_request:
-    branches: [ main ]
+    branches: [ main ]                            # lorsqu'une PR est ouverte vers main
 
-jobs:
-  validate-and-build:
-    runs-on: ubuntu-latest
+jobs:                                             # liste des jobs à exécuter
+  validate-and-build:                             # Nom du job
+    runs-on: ubuntu-latest                        # environnement d'exécution
 
     steps:
-    - name: Récupérer le code
-      uses: actions/checkout@v3
+    - name: Récupérer le code                     # Nom de l'étape (sorte de git clone)
+      uses: actions/checkout@v3                   # action pour récupérer le code (main par défaut)
 
     - name: Installer Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+      uses: actions/setup-python@v4               # action pour installer Python
+      with:                                       # paramètres de l'étape
+        python-version: '3.11'                    # version de Python à installer
 
     - name: Valider le JSON
-      run: python scripts/validate_json.py
+      run: python scripts/validate_json.py        # éxecute la commande
 
     - name: Générer le HTML
-      if: github.ref == 'refs/heads/main'
-      run: python scripts/generate_html.py
+      if: github.ref == 'refs/heads/main'         # se déclenche que sur main (pas pour une PR)
+      run: python scripts/generate_html.py        # éxecute la commande
 
     - name: Déployer sur GitHub Pages
       if: github.ref == 'refs/heads/main'
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v3         # action pour déployer sur GitHub Pages
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: .
-        publish_branch: gh-pages
+        github_token: ${{ secrets.GITHUB_TOKEN }} # token pour commit sur le repo (fourni automatiquement par GitHub)
+        publish_dir: .                            # prend le contenu du répertoire racine
+        publish_branch: gh-pages                  # commit ce contenu dans la branche gh-pages
+
+# fermeture de l'environnement d'exécution
